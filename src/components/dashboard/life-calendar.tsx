@@ -79,7 +79,7 @@ export function LifeCalendar() {
   };
 
   return (
-    <Card className="p-5 flex flex-col justify-between border-border-theme h-full select-none shadow-md">
+    <Card className="p-5 flex flex-col justify-between border-border-theme select-none shadow-md">
       <div className="space-y-4">
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
