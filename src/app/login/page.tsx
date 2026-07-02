@@ -4,11 +4,12 @@ import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAuthStore } from "@/stores/authStore";
 import { useToastStore } from "@/stores/toastStore";
-import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Sparkles, Mail, Lock, ArrowRight } from "lucide-react";
 import Link from "next/link";
+import Image from "next/image";
+
+// Import local illustration
+import illustration from "./image.png";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -24,7 +25,7 @@ export default function LoginPage() {
     e.preventDefault();
 
     if (!email.trim() || !password.trim()) {
-      showToast("Please fill in both email and password fields.", "error", "Validation Error");
+      showToast("Please enter both email and password.", "error", "Validation Error");
       return;
     }
 
@@ -35,95 +36,97 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen w-screen flex flex-col items-center justify-center p-6 bg-slate-50 dark:bg-slate-950 transition-colors duration-200 select-none relative overflow-hidden">
-      {/* Radial glow background */}
-      <div className="absolute top-0 left-0 right-0 bottom-0 bg-[radial-gradient(circle_at_center,rgba(59,130,246,0.03),transparent_75%)] pointer-events-none" />
-
-      <div className="w-full max-w-sm relative z-10 space-y-6">
-        {/* Brand Header */}
-        <div className="flex flex-col items-center text-center space-y-2">
-          <div className="flex items-center justify-center w-10 h-10 rounded-xl bg-accent text-white shadow-md">
-            <Sparkles size={20} className="animate-pulse" />
-          </div>
-          <div>
-            <h2 className="text-2xl font-black tracking-tight text-text-primary">
-              Welcome back
+    <div className="min-h-screen w-screen flex bg-white dark:bg-slate-950 transition-colors duration-200 select-none overflow-hidden font-sans">
+      
+      {/* Left Column: Authentic Login Form */}
+      <div className="w-full lg:w-1/2 flex flex-col justify-center px-8 sm:px-16 lg:px-24 py-12">
+        <div className="max-w-md w-full mx-auto space-y-8">
+          
+          {/* Header */}
+          <div className="space-y-3">
+            <h2 className="text-3xl font-bold tracking-tight text-slate-800 dark:text-white leading-tight">
+              Ready to start your success story?
             </h2>
-            <p className="text-xs text-text-secondary mt-1">
-              Enter credentials to access your study missions
+            <p className="text-sm text-slate-500 dark:text-slate-400 leading-relaxed font-medium">
+              Signin to our website and continue leafing through your favorite literature today!
             </p>
           </div>
-        </div>
 
-        {/* Form Card */}
-        <Card className="p-6 border-border-theme shadow-xl bg-card">
-          <form onSubmit={handleLogin} className="space-y-4">
-            {/* Email */}
-            <div className="space-y-1.5">
-              <label className="block text-[10px] font-bold uppercase tracking-wider text-text-secondary">
-                Email Address
+          {/* Form */}
+          <form onSubmit={handleLogin} className="space-y-6 pt-4">
+            
+            {/* Email Address */}
+            <div className="flex flex-col border-b border-slate-200 dark:border-slate-800 py-1.5 focus-within:border-[#96cdfb] transition-all">
+              <label className="text-[11px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider mb-0.5">
+                Email
               </label>
-              <div className="relative">
-                <Input
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder="name@domain.com"
-                  className="h-10 text-xs pl-9"
-                  disabled={loading}
-                />
-                <Mail size={13} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-text-secondary/55" />
-              </div>
+              <input
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="janedoe@mail.com"
+                disabled={loading}
+                className="w-full bg-transparent border-none p-0 text-sm text-slate-800 dark:text-white placeholder-slate-300 focus:outline-hidden focus:ring-0 focus:border-none"
+              />
             </div>
 
             {/* Password */}
-            <div className="space-y-1.5">
+            <div className="flex flex-col border-b border-slate-200 dark:border-slate-800 py-1.5 focus-within:border-[#96cdfb] transition-all">
               <div className="flex justify-between items-center">
-                <label className="block text-[10px] font-bold uppercase tracking-wider text-text-secondary">
+                <label className="text-[11px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider mb-0.5">
                   Password
                 </label>
                 <Link
                   href="/forgot-password"
-                  className="text-[10px] font-bold text-accent hover:underline"
+                  className="text-[10px] font-bold text-[#96cdfb] hover:underline"
                 >
-                  Forgot password?
+                  Forgot?
                 </Link>
               </div>
-              <div className="relative">
-                <Input
-                  type="password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  placeholder="••••••••"
-                  className="h-10 text-xs pl-9"
-                  disabled={loading}
-                />
-                <Lock size={13} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-text-secondary/55" />
-              </div>
+              <input
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="••••••••"
+                disabled={loading}
+                className="w-full bg-transparent border-none p-0 text-sm text-slate-800 dark:text-white placeholder-slate-300 focus:outline-hidden focus:ring-0 focus:border-none"
+              />
             </div>
 
             {/* Action Buttons */}
-            <Button
-              type="submit"
-              variant="primary"
-              size="md"
-              className="w-full h-10 text-xs font-bold rounded-xl flex items-center justify-center gap-1.5 cursor-pointer mt-2"
-              disabled={loading}
-            >
-              {loading ? "Authenticating..." : "Sign In"}
-              {!loading && <ArrowRight size={13} />}
-            </Button>
-          </form>
-        </Card>
+            <div className="pt-4 flex flex-col sm:flex-row items-center justify-between gap-4">
+              <Button
+                type="submit"
+                disabled={loading}
+                className="w-full sm:w-auto px-10 py-5 bg-[#96cdfb] hover:bg-[#85c1f9] active:bg-[#72b5f7] text-white font-extrabold text-sm rounded-full shadow-md hover:shadow-lg transition-all border-none cursor-pointer"
+              >
+                {loading ? "Signing in..." : "Sign in"}
+              </Button>
 
-        {/* Footer Link */}
-        <div className="text-center text-xs text-text-secondary">
-          Don't have an account?{" "}
-          <Link href="/signup" className="font-bold text-accent hover:underline">
-            Create Account
-          </Link>
+              <div className="text-xs text-slate-400 dark:text-slate-500 font-medium">
+                New reader?{" "}
+                <Link href="/signup" className="font-bold text-[#96cdfb] hover:underline">
+                  Create account
+                </Link>
+              </div>
+            </div>
+
+          </form>
         </div>
       </div>
+
+      {/* Right Column: Illustration Panel */}
+      <div className="hidden lg:flex w-1/2 bg-[#faf9f6] dark:bg-slate-900 justify-center items-center relative p-8">
+        <div className="relative w-full h-full max-w-lg max-h-lg flex items-center justify-center">
+          <Image
+            src={illustration}
+            alt="Study Illustration"
+            priority
+            className="object-contain w-auto h-auto max-w-full max-h-full"
+          />
+        </div>
+      </div>
+
     </div>
   );
 }

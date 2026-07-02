@@ -4,17 +4,19 @@ import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAuthStore } from "@/stores/authStore";
 import { useToastStore } from "@/stores/toastStore";
-import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Sparkles, Mail, Lock, AlertCircle, ArrowRight } from "lucide-react";
 import Link from "next/link";
+import Image from "next/image";
+
+// Import the local illustration from the login folder
+import illustration from "../login/image.png";
 
 export default function SignupPage() {
   const router = useRouter();
   const { signup, status } = useAuthStore();
   const { showToast } = useToastStore();
 
+  const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -29,7 +31,7 @@ export default function SignupPage() {
   const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!email.trim() || !password || !confirmPassword) {
+    if (!fullName.trim() || !email.trim() || !password || !confirmPassword) {
       showToast("Please fill out all required fields.", "error", "Validation Error");
       return;
     }
@@ -54,134 +56,146 @@ export default function SignupPage() {
     }
 
     if (!acceptTerms) {
-      showToast("You must accept the Terms of Service to continue.", "error", "Validation Error");
+      showToast("You must accept the Terms & Conditions to continue.", "error", "Validation Error");
       return;
     }
 
     const success = await signup(email.trim(), password);
     if (success) {
+      // Store full name locally for profile setup
+      localStorage.setItem("studyquest_signup_fullname", fullName.trim());
       router.push("/verify-email");
     }
   };
 
   return (
-    <div className="min-h-screen w-screen flex flex-col items-center justify-center p-6 bg-slate-50 dark:bg-slate-950 transition-colors duration-200 select-none relative overflow-hidden">
-      {/* Background radial soft accent */}
-      <div className="absolute top-0 left-0 right-0 bottom-0 bg-[radial-gradient(circle_at_center,rgba(59,130,246,0.03),transparent_75%)] pointer-events-none" />
-
-      <div className="w-full max-w-sm relative z-10 space-y-6">
-        {/* Brand Header */}
-        <div className="flex flex-col items-center text-center space-y-2">
-          <div className="flex items-center justify-center w-10 h-10 rounded-xl bg-accent text-white shadow-md">
-            <Sparkles size={20} className="animate-pulse" />
-          </div>
-          <div>
-            <h2 className="text-2xl font-black tracking-tight text-text-primary">
-              Create your account
+    <div className="min-h-screen w-screen flex bg-white dark:bg-slate-950 transition-colors duration-200 select-none overflow-hidden font-sans">
+      
+      {/* Left Column: Authentic Signup Form */}
+      <div className="w-full lg:w-1/2 flex flex-col justify-center px-8 sm:px-16 lg:px-24 py-12">
+        <div className="max-w-md w-full mx-auto space-y-7">
+          
+          {/* Header */}
+          <div className="space-y-3">
+            <h2 className="text-3xl font-bold tracking-tight text-slate-800 dark:text-white leading-tight">
+              Ready to start your success story?
             </h2>
-            <p className="text-xs text-text-secondary mt-1">
-              Join StudyQuest to start logging gamified achievements
+            <p className="text-sm text-slate-500 dark:text-slate-400 leading-relaxed font-medium">
+              Signup to our website and start leafing through your favorite literature today!
             </p>
           </div>
-        </div>
 
-        {/* Form Card */}
-        <Card className="p-6 border-border-theme shadow-xl bg-card">
-          <form onSubmit={handleSignup} className="space-y-4">
-            {/* Email */}
-            <div className="space-y-1.5">
-              <label className="block text-[10px] font-bold uppercase tracking-wider text-text-secondary">
-                Email Address
+          {/* Form */}
+          <form onSubmit={handleSignup} className="space-y-5 pt-2">
+            
+            {/* Full Name */}
+            <div className="flex flex-col border-b border-slate-200 dark:border-slate-800 py-1.5 focus-within:border-[#96cdfb] transition-all">
+              <label className="text-[11px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider mb-0.5">
+                Full name
               </label>
-              <div className="relative">
-                <Input
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder="name@domain.com"
-                  className="h-10 text-xs pl-9"
-                  disabled={loading}
-                />
-                <Mail size={13} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-text-secondary/55" />
-              </div>
+              <input
+                type="text"
+                value={fullName}
+                onChange={(e) => setFullName(e.target.value)}
+                placeholder="Jane Doe"
+                disabled={loading}
+                className="w-full bg-transparent border-none p-0 text-sm text-slate-800 dark:text-white placeholder-slate-300 focus:outline-hidden focus:ring-0 focus:border-none"
+              />
+            </div>
+
+            {/* Email Address */}
+            <div className="flex flex-col border-b border-slate-200 dark:border-slate-800 py-1.5 focus-within:border-[#96cdfb] transition-all">
+              <label className="text-[11px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider mb-0.5">
+                Email
+              </label>
+              <input
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="janedoe@mail.com"
+                disabled={loading}
+                className="w-full bg-transparent border-none p-0 text-sm text-slate-800 dark:text-white placeholder-slate-300 focus:outline-hidden focus:ring-0 focus:border-none"
+              />
             </div>
 
             {/* Password */}
-            <div className="space-y-1.5">
-              <label className="block text-[10px] font-bold uppercase tracking-wider text-text-secondary">
+            <div className="flex flex-col border-b border-slate-200 dark:border-slate-800 py-1.5 focus-within:border-[#96cdfb] transition-all">
+              <label className="text-[11px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider mb-0.5">
                 Password
               </label>
-              <div className="relative">
-                <Input
-                  type="password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  placeholder="••••••••"
-                  className="h-10 text-xs pl-9"
-                  disabled={loading}
-                />
-                <Lock size={13} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-text-secondary/55" />
-              </div>
-              <p className="text-[9px] text-text-secondary/80 leading-normal">
-                Min 8 chars: 1 uppercase, 1 lowercase, 1 number, 1 symbol (@$!%*?&#).
-              </p>
+              <input
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="••••••••"
+                disabled={loading}
+                className="w-full bg-transparent border-none p-0 text-sm text-slate-800 dark:text-white placeholder-slate-300 focus:outline-hidden focus:ring-0 focus:border-none"
+              />
             </div>
 
             {/* Confirm Password */}
-            <div className="space-y-1.5">
-              <label className="block text-[10px] font-bold uppercase tracking-wider text-text-secondary">
+            <div className="flex flex-col border-b border-slate-200 dark:border-slate-800 py-1.5 focus-within:border-[#96cdfb] transition-all">
+              <label className="text-[11px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider mb-0.5">
                 Confirm Password
               </label>
-              <div className="relative">
-                <Input
-                  type="password"
-                  value={confirmPassword}
-                  onChange={(e) => setConfirmPassword(e.target.value)}
-                  placeholder="••••••••"
-                  className="h-10 text-xs pl-9"
-                  disabled={loading}
-                />
-                <Lock size={13} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-text-secondary/55" />
+              <input
+                type="password"
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                placeholder="••••••••"
+                disabled={loading}
+                className="w-full bg-transparent border-none p-0 text-sm text-slate-800 dark:text-white placeholder-slate-300 focus:outline-hidden focus:ring-0 focus:border-none"
+              />
+            </div>
+
+            {/* Terms and Conditions Checkbox */}
+            <div className="flex items-center gap-2.5 pt-2 select-none">
+              <input
+                type="checkbox"
+                id="agreeTerms"
+                checked={acceptTerms}
+                onChange={(e) => setAcceptTerms(e.target.checked)}
+                className="w-4 h-4 rounded-sm border-slate-300 text-[#96cdfb] focus:ring-[#96cdfb] focus:ring-opacity-25"
+              />
+              <label htmlFor="agreeTerms" className="text-xs text-slate-400 dark:text-slate-500 font-medium cursor-pointer">
+                I agree to the <span className="text-[#96cdfb] hover:underline">Terms & Conditions</span>
+              </label>
+            </div>
+
+            {/* Action Buttons */}
+            <div className="pt-4 flex flex-col sm:flex-row items-center justify-between gap-4">
+              <Button
+                type="submit"
+                disabled={loading}
+                className="w-full sm:w-auto px-10 py-5 bg-[#96cdfb] hover:bg-[#85c1f9] active:bg-[#72b5f7] text-white font-extrabold text-sm rounded-full shadow-md hover:shadow-lg transition-all border-none cursor-pointer"
+              >
+                {loading ? "Signing up..." : "Sign up"}
+              </Button>
+
+              <div className="text-xs text-slate-400 dark:text-slate-500 font-medium">
+                Already registered?{" "}
+                <Link href="/login" className="font-bold text-[#96cdfb] hover:underline">
+                  Sign in
+                </Link>
               </div>
             </div>
 
-            {/* Accept Terms */}
-            <div className="flex items-center gap-2 pt-1 select-none">
-              <input
-                type="checkbox"
-                id="terms"
-                checked={acceptTerms}
-                onChange={(e) => setAcceptTerms(e.target.checked)}
-                className="w-3.5 h-3.5 rounded-sm border-border-theme text-accent focus:ring-accent focus:ring-opacity-25"
-              />
-              <label htmlFor="terms" className="text-xs text-text-secondary font-medium cursor-pointer">
-                I accept the{" "}
-                <span className="font-bold text-accent hover:underline">Terms of Service</span>
-              </label>
-            </div>
-
-            {/* Submit */}
-            <Button
-              type="submit"
-              variant="primary"
-              size="md"
-              className="w-full h-10 text-xs font-bold rounded-xl flex items-center justify-center gap-1.5 cursor-pointer mt-2"
-              disabled={loading}
-            >
-              {loading ? "Creating account..." : "Sign Up"}
-              {!loading && <ArrowRight size={13} />}
-            </Button>
           </form>
-        </Card>
-
-        {/* Footer Link */}
-        <div className="text-center text-xs text-text-secondary">
-          Already have an account?{" "}
-          <Link href="/login" className="font-bold text-accent hover:underline">
-            Sign In
-          </Link>
         </div>
       </div>
+
+      {/* Right Column: Illustration Panel */}
+      <div className="hidden lg:flex w-1/2 bg-[#faf9f6] dark:bg-slate-900 justify-center items-center relative p-8">
+        <div className="relative w-full h-full max-w-lg max-h-lg flex items-center justify-center">
+          <Image
+            src={illustration}
+            alt="Study Illustration"
+            priority
+            className="object-contain w-auto h-auto max-w-full max-h-full"
+          />
+        </div>
+      </div>
+
     </div>
   );
 }
