@@ -185,15 +185,15 @@ export default function SignupPage() {
       </div>
 
       {/* Right Column: Illustration Panel */}
-      <div className="hidden lg:flex w-1/2 bg-[#faf9f6] dark:bg-slate-900 justify-center items-center relative p-8">
-        <div className="relative w-full h-full max-w-lg max-h-lg flex items-center justify-center">
-          <Image
-            src={illustration}
-            alt="Study Illustration"
-            priority
-            className="object-contain w-auto h-auto max-w-full max-h-full"
-          />
-        </div>
+      <div className="hidden lg:flex w-1/2 bg-[#faf9f6] dark:bg-slate-900 relative">
+        <Image
+          src={illustration}
+          alt="Study Illustration"
+          priority
+          fill
+          sizes="50vw"
+          className="object-cover object-bottom"
+        />
       </div>
 
     </div>
