@@ -95,7 +95,7 @@ export function XPChart() {
   );
 
   return (
-    <Card className="flex flex-col h-full bg-card border-border-theme p-5">
+    <Card className="flex flex-col bg-card border-border-theme p-5">
       {/* Header Panel */}
       <div className="flex flex-col gap-4 mb-6 border-b border-border-theme/40 pb-5">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
