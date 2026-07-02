@@ -13,6 +13,14 @@ import { Mission } from "@/types/mission";
 import { StudySessionLog } from "@/types/statistics";
 import { gameConfig } from "@/config/game";
 
+// Helper to get local date string YYYY-MM-DD
+const getLocalDateStr = (d: Date = new Date()) => {
+  const year = d.getFullYear();
+  const month = String(d.getMonth() + 1).padStart(2, "0");
+  const date = String(d.getDate()).padStart(2, "0");
+  return `${year}-${month}-${date}`;
+};
+
 export class MissionCompletionPipeline {
   async execute(missionId: string): Promise<boolean> {
     const userStore = useUserStore.getState();
@@ -103,7 +111,7 @@ export class MissionCompletionPipeline {
       });
 
       // 5. Update Statistics & Heatmap
-      const todayStr = new Date().toISOString().split("T")[0];
+      const todayStr = getLocalDateStr();
       const updatedHistory = statisticsStore.historyLogs.map((log) => {
         if (log.date === todayStr) {
           return {

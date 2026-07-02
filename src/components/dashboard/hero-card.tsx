@@ -94,11 +94,19 @@ export function HeroCard({
       }
     }
 
+    // Helper to get local date string YYYY-MM-DD
+    const getLocalDateStr = (d: Date = new Date()) => {
+      const year = d.getFullYear();
+      const month = String(d.getMonth() + 1).padStart(2, "0");
+      const date = String(d.getDate()).padStart(2, "0");
+      return `${year}-${month}-${date}`;
+    };
+
     // 2. Check focus duration comparison with yesterday
-    const todayDateStr = new Date().toISOString().split("T")[0];
+    const todayDateStr = getLocalDateStr();
     const yesterdayDate = new Date();
     yesterdayDate.setDate(yesterdayDate.getDate() - 1);
-    const yesterdayDateStr = yesterdayDate.toISOString().split("T")[0];
+    const yesterdayDateStr = getLocalDateStr(yesterdayDate);
 
     const todayLog = historyLogs.find((l) => l.date === todayDateStr);
     const yesterdayLog = historyLogs.find((l) => l.date === yesterdayDateStr);

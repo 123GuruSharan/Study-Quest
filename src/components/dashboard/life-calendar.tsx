@@ -125,7 +125,7 @@ export function LifeCalendar() {
                   {/* Tooltip Popup */}
                   <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-1.5 hidden group-hover:block z-30 bg-slate-900 text-white text-[9px] font-bold py-1.5 px-2.5 rounded-md shadow-lg whitespace-nowrap pointer-events-none text-left space-y-0.5">
                     <p className="border-b border-white/20 pb-0.5 mb-0.5">{formattedDate}</p>
-                    {log && log.minutesFocused > 0 ? (
+                    {log && (log.minutesFocused > 0 || log.missionsCompleted > 0 || log.xpEarned > 0) ? (
                       <>
                         <p>Focus: {formatMins(log.minutesFocused)}</p>
                         <p>XP: +{log.xpEarned} XP</p>

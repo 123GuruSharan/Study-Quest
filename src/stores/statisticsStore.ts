@@ -13,44 +13,18 @@ interface StatisticsState {
   updatePhoneUsageLog: (minutes: number) => Promise<void>;
 }
 
+// Helper to get local date string YYYY-MM-DD
+const getLocalDateStr = (d: Date = new Date()) => {
+  const year = d.getFullYear();
+  const month = String(d.getMonth() + 1).padStart(2, "0");
+  const date = String(d.getDate()).padStart(2, "0");
+  return `${year}-${month}-${date}`;
+};
+
 export const useStatisticsStore = create<StatisticsState>((set, get) => {
-  // Listen for mission completions to log historical data
-  eventSystem.subscribe(EVENTS.MISSION_COMPLETED, (payload: { finalXP: number; studyHours: number }) => {
-    const todayStr = new Date().toISOString().split("T")[0];
-    const { historyLogs } = get();
-
-    const updated = historyLogs.map((log) => {
-      if (log.date === todayStr) {
-        return {
-          ...log,
-          minutesFocused: log.minutesFocused + Math.round(payload.studyHours * 60),
-          xpEarned: log.xpEarned + payload.finalXP,
-          missionsCompleted: log.missionsCompleted + 1,
-        };
-      }
-      return log;
-    });
-
-    const todayLogExists = historyLogs.some((l) => l.date === todayStr);
-    if (!todayLogExists) {
-      const newLog: StudySessionLog = {
-        id: `log_${Date.now()}`,
-        date: todayStr,
-        minutesFocused: Math.round(payload.studyHours * 60),
-        xpEarned: payload.finalXP,
-        missionsCompleted: 1,
-        phoneUsageMinutes: 0,
-      };
-      updated.push(newLog);
-    }
-
-    set({ historyLogs: updated });
-    statisticsRepository.saveHistoryLogs(updated);
-  });
-
   // Listen for phone usage updates
   eventSystem.subscribe(EVENTS.PHONE_USAGE_UPDATED, (payload: { minutesUsed: number }) => {
-    const todayStr = new Date().toISOString().split("T")[0];
+    const todayStr = getLocalDateStr();
     const { historyLogs } = get();
 
     const updated = historyLogs.map((log) => {
@@ -94,7 +68,7 @@ export const useStatisticsStore = create<StatisticsState>((set, get) => {
     },
 
     logFocusSession: async (minutes, xpEarned) => {
-      const todayStr = new Date().toISOString().split("T")[0];
+      const todayStr = getLocalDateStr();
       const { historyLogs } = get();
 
       const updated = historyLogs.map((log) => {
