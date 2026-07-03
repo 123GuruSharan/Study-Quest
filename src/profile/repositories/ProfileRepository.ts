@@ -29,7 +29,8 @@ export class ProfileRepository {
 
     const { data, error } = await supabase
       .from("profiles")
-      .upsert(dbPayload)
+      .update(dbPayload)
+      .eq("id", userId)
       .select("*")
       .single();
 
