@@ -143,7 +143,7 @@ export class MissionCompletionPipeline {
       // Create new User Profile State
       const nextUser = {
         ...userStore.user,
-        studyHours: parseFloat((userStore.user.studyHours + studyHourGain).toFixed(1)),
+        studyHours: userStore.user.studyHours,
         missionPoints: Math.max(0, userStore.user.missionPoints + payout.missionPoints),
         xp: nextXp,
         level: xpDetails.level,

@@ -29,6 +29,17 @@ export function DailySummaryModal({ isOpen, onClose, data }: DailySummaryProps) 
     return hrs > 0 ? `${hrs}h ${rem}m` : `${rem} mins`;
   };
 
+  const formatHoursValue = (hoursFraction: number) => {
+    const totalMinutes = Math.round(hoursFraction * 60);
+    if (totalMinutes <= 0) return "0 min";
+    const hrs = Math.floor(totalMinutes / 60);
+    const rem = totalMinutes % 60;
+    if (hrs > 0) {
+      return rem > 0 ? `${hrs}h ${rem}m` : `${hrs}h`;
+    }
+    return `${rem}m`;
+  };
+
   return (
     <AnimatePresence>
       {isOpen && (
@@ -69,7 +80,7 @@ export function DailySummaryModal({ isOpen, onClose, data }: DailySummaryProps) 
                 </div>
                 <div>
                   <span className="text-[10px] font-bold text-text-secondary uppercase tracking-wider block">XP Gained</span>
-                  <span className="text-sm font-black text-text-primary font-mono">+{data.xpEarned} XP</span>
+                  <span className="text-sm font-black text-text-primary font-mono font-bold">+{data.xpEarned} XP</span>
                 </div>
               </div>
 
@@ -80,7 +91,7 @@ export function DailySummaryModal({ isOpen, onClose, data }: DailySummaryProps) 
                 </div>
                 <div>
                   <span className="text-[10px] font-bold text-text-secondary uppercase tracking-wider block">Gold Coins</span>
-                  <span className="text-sm font-black text-text-primary font-mono">+{data.coinsEarned} c</span>
+                  <span className="text-sm font-black text-text-primary font-mono font-bold">+{data.coinsEarned} c</span>
                 </div>
               </div>
 
@@ -91,7 +102,7 @@ export function DailySummaryModal({ isOpen, onClose, data }: DailySummaryProps) 
                 </div>
                 <div>
                   <span className="text-[10px] font-bold text-text-secondary uppercase tracking-wider block">Duration</span>
-                  <span className="text-sm font-black text-text-primary font-mono">{data.studyHours.toFixed(1)} hrs</span>
+                  <span className="text-sm font-black text-text-primary font-mono font-bold">{formatHoursValue(data.studyHours)}</span>
                 </div>
               </div>
 

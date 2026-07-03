@@ -20,6 +20,7 @@ import { WeeklyReportModal } from "@/components/dashboard/weekly-report-modal";
 import { RuleBookView } from "@/encyclopedia/components/rule-book-view";
 import { ImmersiveFocus } from "@/components/dashboard/immersive-focus";
 import { useFocusStore } from "@/stores/focusStore";
+import { getTodayStudyMinutes, formatStudyHours } from "@/game/systems/studyHoursDerivation";
 
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -66,7 +67,13 @@ export default function DashboardPage() {
   const combatLogs = journeyLog
     .map(parseBossCombatLog)
     .filter((l): l is BossCombatLogEntry => l !== null);
-  const { loadHistoryLogs } = useStatisticsStore();
+  const { loadHistoryLogs, historyLogs } = useStatisticsStore();
+
+  const todayStudyMins = getTodayStudyMinutes(historyLogs);
+  const focusSessions = useFocusStore((state) => state.history);
+  const todaySessionsCount = focusSessions.filter(
+    (s) => new Date(s.completedAt).toDateString() === new Date().toDateString()
+  ).length;
 
   // Resolve current streak details dynamically using the gameplay engine
   const userStreak = user?.streak ?? 0;
@@ -182,7 +189,7 @@ export default function DashboardPage() {
   const summaryPayload = {
     xpEarned: xpToday,
     coinsEarned: completedToday.reduce((acc, m) => acc + m.coinReward, 0),
-    studyHours: hoursToday,
+    studyHours: todayStudyMins / 60,
     phoneMinutes: user.phoneUsageMinutes,
     missionsCount: completedToday.length,
     bossDamage: bossDamageToday,
@@ -303,12 +310,12 @@ export default function DashboardPage() {
 
             {/* Focus hours */}
             <StatsCard
-              title="Focus Hours"
-              value={`${(user.studyHours ?? 0.0).toFixed(1)} Hours`}
-              description={user.studyHours > 0 ? "Total accumulated study hours." : "No focus sessions completed yet."}
+              title="Today's Study"
+              value={formatStudyHours(todayStudyMins)}
+              description={todayStudyMins > 0 ? `Completed Focus Sessions: ${todaySessionsCount} Sessions Today` : "No focus sessions completed today."}
               icon={Clock}
               iconColorClass="text-emerald-500 bg-emerald-500/10 border-emerald-500/20"
-              tooltip="Focus Hours - Total accumulated study hours across completed missions and custom focus sessions."
+              tooltip="Today's Study - Study hours today derived from completed focus sessions."
             />
 
             {/* Phone screen limit (Interactive Penalty Test) */}

@@ -58,9 +58,9 @@ export function LifeCalendar() {
     }
 
     // Green heatmap based on focus duration
-    if (log.minutesFocused >= 120) {
+    if (log.minutesFocused >= 100) {
       return "bg-emerald-600 dark:bg-emerald-500 border border-emerald-700/20 text-white hover:bg-emerald-500 dark:hover:bg-emerald-400";
-    } else if (log.minutesFocused >= 60) {
+    } else if (log.minutesFocused >= 50) {
       return "bg-emerald-500/60 dark:bg-emerald-600/60 border border-emerald-500/20 hover:bg-emerald-500 dark:hover:bg-emerald-600";
     } else {
       return "bg-emerald-500/20 dark:bg-emerald-800/20 border border-emerald-500/10 hover:bg-emerald-500/35 dark:hover:bg-emerald-800/40";

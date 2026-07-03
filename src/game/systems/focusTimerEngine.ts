@@ -225,7 +225,6 @@ export class FocusTimerEngine {
         console.log("No mission attached. Awarding standard focus payouts.");
         await userStore.addXp(xpGained);
         await userStore.addCoins(coinsGained);
-        await userStore.addStudyHours(hoursFocused);
         await useStatisticsStore.getState().logFocusSession(minutesFocused, xpGained);
         await userStore.checkAchievements();
 

@@ -29,10 +29,7 @@ export default function SettingsPage() {
     await userRepositorySave(updated);
   };
 
-  const handleStudyGoalChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const updated = { ...user, studyHours: parseFloat(e.target.value) || 0.0 };
-    await userRepositorySave(updated);
-  };
+
 
   const handleSignOutClick = async () => {
     await logout();
@@ -77,23 +74,7 @@ export default function SettingsPage() {
               />
             </div>
 
-            {/* Study Hours Goal */}
-            <div className="space-y-1.5">
-              <div className="flex items-center gap-2">
-                <Clock size={14} className="text-text-secondary" />
-                <label className="block text-[10px] font-bold uppercase tracking-wider text-text-secondary">
-                  Daily Study Hours Goal
-                </label>
-              </div>
-              <input
-                type="number"
-                step="0.5"
-                value={user.studyHours}
-                onChange={handleStudyGoalChange}
-                className="w-full h-10 rounded-xl border border-border-theme bg-card px-3 text-xs text-text-primary focus:outline-none focus:border-accent/40 focus:ring-2 focus:ring-accent/10 transition-all"
-                placeholder="4.0"
-              />
-            </div>
+
           </div>
         </Card>
 

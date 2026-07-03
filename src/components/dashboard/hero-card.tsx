@@ -11,6 +11,7 @@ import { useMissionStore } from "@/stores/missionStore";
 import { useStatisticsStore } from "@/stores/statisticsStore";
 import { levelSystem } from "@/game/systems/levelSystem";
 import { gameConfig } from "@/config/game";
+import { getTodayStudyMinutes, formatStudyHours } from "@/game/systems/studyHoursDerivation";
 
 interface HeroCardProps {
   quote?: string;
@@ -189,33 +190,33 @@ export function HeroCard({
         {/* Vertical divider */}
         <div className="hidden md:block w-[1px] bg-border-theme h-full self-stretch md:col-span-1 justify-self-center opacity-70" />
 
-        {/* Right Side: Today's Mission Objectives */}
-        <div className="md:col-span-1 flex flex-col justify-center space-y-4">
+        {/* Right Side: Today's Mission Objectives & Daily Study Goal */}
+        <div className="md:col-span-1 flex flex-col justify-between space-y-4">
           <div>
-            <div className="flex items-center gap-1.5 mb-3">
-              <Compass size={16} className="text-accent" />
-              <h4 className="text-xs font-bold uppercase tracking-wider text-text-primary">
+            <div className="flex items-center gap-1.5 mb-2.5">
+              <Compass size={15} className="text-accent" />
+              <h4 className="text-[10px] font-bold uppercase tracking-wider text-text-primary">
                 Daily Targets
               </h4>
             </div>
             
-            <ul className="space-y-3.5">
+            <ul className="space-y-3">
               {todayMissions.map((item) => (
-                <li key={item.id} className="flex items-start gap-2.5">
+                <li key={item.id} className="flex items-start gap-2">
                   {item.completed ? (
-                    <CheckCircle2 size={16} className="text-success mt-0.5 shrink-0" />
+                    <CheckCircle2 size={14} className="text-success mt-0.5 shrink-0" />
                   ) : (
-                    <Circle size={16} className="text-text-secondary/55 mt-0.5 shrink-0" />
+                    <Circle size={14} className="text-text-secondary/55 mt-0.5 shrink-0" />
                   )}
                   <div>
-                    <span className="text-[10px] font-bold text-text-secondary uppercase tracking-wider block">
+                    <span className="text-[9px] font-bold text-text-secondary uppercase tracking-wider block">
                       {item.label}
                     </span>
                     <span
                       className={
                         item.completed
-                          ? "text-xs text-text-secondary/70 line-through font-medium"
-                          : "text-xs font-semibold text-text-primary"
+                          ? "text-[11px] text-text-secondary/70 line-through font-medium block"
+                          : "text-[11px] font-semibold text-text-primary block"
                       }
                     >
                       {item.detail}
@@ -225,6 +226,37 @@ export function HeroCard({
               ))}
             </ul>
           </div>
+
+          {/* Daily Study Goal Progress Section */}
+          {(() => {
+            const todayMins = getTodayStudyMinutes(historyLogs);
+            const targetMins = gameConfig.dailyTargets.studyHours * 60;
+            const progressPercent = Math.min(100, Math.round((todayMins / targetMins) * 100));
+            const remainingMins = Math.max(0, targetMins - todayMins);
+
+            return (
+              <div className="pt-3 border-t border-border-theme/40 space-y-2">
+                <span className="text-[9px] font-bold uppercase tracking-wider text-text-secondary block">
+                  Today's Progress
+                </span>
+                <div className="flex justify-between items-baseline">
+                  <span className="text-sm font-extrabold text-text-primary font-mono">
+                    {formatStudyHours(todayMins)}
+                  </span>
+                  <span className="text-[9px] font-bold text-text-secondary font-mono">
+                    Goal: {gameConfig.dailyTargets.studyHours}h
+                  </span>
+                </div>
+                
+                <Progress value={progressPercent} className="h-1.5" />
+                
+                <div className="flex justify-between text-[9px] font-bold text-text-secondary">
+                  <span>Remaining</span>
+                  <span className="font-mono text-accent">{formatStudyHours(remainingMins)}</span>
+                </div>
+              </div>
+            );
+          })()}
         </div>
       </div>
     </Card>

@@ -6,8 +6,10 @@ import { useUserStore } from "@/stores/userStore";
 import { useAuthStore } from "@/stores/authStore";
 import { useProfileStore } from "@/profile/stores/profileStore";
 import { useMissionStore } from "@/stores/missionStore";
+import { useStatisticsStore } from "@/stores/statisticsStore";
 import { profileRepository } from "@/profile/repositories/ProfileRepository";
 import { calculateBossStats, getBossForDefeatedCount } from "@/config/bosses";
+import { getLifetimeStudyMinutes, formatStudyHours } from "@/game/systems/studyHoursDerivation";
 import { 
   Flame, 
   Star, 
@@ -40,6 +42,7 @@ export default function ProfilePage() {
   const { user: authUser } = useAuthStore();
   const { profile, updateProfile, uploadAvatar, loading: isProfileUpdating } = useProfileStore();
   const { loadMissions, missions } = useMissionStore();
+  const { historyLogs, loadHistoryLogs } = useStatisticsStore();
 
   // Local form editing states
   const [isEditing, setIsEditing] = useState(false);
@@ -56,7 +59,8 @@ export default function ProfilePage() {
   useEffect(() => {
     loadUser();
     loadMissions();
-  }, [loadUser, loadMissions]);
+    loadHistoryLogs();
+  }, [loadUser, loadMissions, loadHistoryLogs]);
 
   // Sync form states with profile fields on load
   useEffect(() => {
@@ -405,7 +409,9 @@ export default function ProfilePage() {
           {/* Hours Card */}
           <Card className="p-4 border-border-theme bg-card flex flex-col justify-between min-h-[100px]">
             <span className="text-[9px] font-bold uppercase tracking-wider text-text-secondary block mb-2">Total Study Hours</span>
-            <span className="text-xl font-black text-text-primary font-mono">{formatStatValue(user.studyHours, "h")}</span>
+            <span className="text-xl font-black text-text-primary font-mono">
+              {formatStudyHours(getLifetimeStudyMinutes(historyLogs))}
+            </span>
           </Card>
 
           {/* Missions Completed */}

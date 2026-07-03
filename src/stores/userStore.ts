@@ -23,7 +23,6 @@ interface UserState {
   loadUser: () => Promise<void>;
   incrementStreak: () => Promise<void>;
   updateStreakFromHistory: (historyLogs: any[]) => Promise<void>;
-  addStudyHours: (hours: number) => Promise<void>;
   setPhoneUsage: (minutes: number) => Promise<void>;
   setTheme: (theme: "light" | "dark") => Promise<void>;
   updateMissionPoints: (points: number) => Promise<void>;
@@ -227,13 +226,6 @@ export const useUserStore = create<UserState>((set, get) => {
       }
     },
 
-    addStudyHours: async (hours: number) => {
-      const { user } = get();
-      const updated = { ...user, studyHours: parseFloat((user.studyHours + hours).toFixed(1)) };
-      set({ user: updated });
-      await userRepository.saveUser(updated);
-    },
-
     setPhoneUsage: async (minutes: number) => {
       const { user } = get();
       const updated = { ...user, phoneUsageMinutes: minutes };
@@ -261,10 +253,15 @@ export const useUserStore = create<UserState>((set, get) => {
       const { missions } = await import("./missionStore").then((mod) => mod.useMissionStore.getState());
       const completedMissionsCount = missions.filter((m) => m.status === "Completed").length;
 
+      const { useStatisticsStore } = await import("./statisticsStore");
+      const logs = useStatisticsStore.getState().historyLogs;
+      const lifetimeMinutes = logs.reduce((acc, log) => acc + (log.minutesFocused || 0), 0);
+      const lifetimeHours = parseFloat((lifetimeMinutes / 60).toFixed(1));
+
       const evaluation = achievementSystem.evaluateAchievements(
         {
           streak: user.streak,
-          studyHours: user.studyHours,
+          studyHours: lifetimeHours,
           completedMissionsCount,
           level: user.level,
           bossesDefeatedCount: Math.floor(completedMissionsCount / 10),

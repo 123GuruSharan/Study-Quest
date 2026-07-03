@@ -13,6 +13,7 @@ import { useUiStore } from "./uiStore";
 import { logGameplayMutation } from "@/game/diagnostics";
 import { missionRewardsConfig } from "@/config/rewards";
 import { missionCompletionPipeline } from "@/game/pipelines/missionCompletionPipeline";
+import { getTodayStudyMinutes } from "@/game/systems/studyHoursDerivation";
 
 interface MissionState {
   missions: Mission[];
@@ -251,10 +252,8 @@ export const useMissionStore = create<MissionState>((set, get) => {
       );
 
       const xpToday = completedToday.reduce((acc, m) => acc + m.xpReward, 0);
-      const hoursToday = completedToday.reduce(
-        (acc, m) => acc + (m.estimatedHours || (m.difficulty === "Easy" ? 0.5 : m.difficulty === "Medium" ? 1.0 : 2.0)),
-        0
-      );
+      const todayStudyMins = getTodayStudyMinutes();
+      const hoursToday = todayStudyMins / 60;
       const hardCompletedToday = completedToday.filter((m) => m.difficulty === "Hard").length;
       const phoneUsageToday = user.phoneUsageMinutes;
 
