@@ -1,0 +1,22 @@
+{
+  "id": "cozy-library",
+  "name": "Cozy Library",
+  "description": "A warm, quiet library setting with a brick fireplace.",
+  "background": "study room theme.mp4",
+  "thumbnail": "studyroomtheme.webp",
+  "recommendedAudio": "fireplace.mp3",
+  "availableAudio": [
+    "fireplace.mp3",
+    "forest.mp3",
+    "white noise.mp3"
+  ],
+  "accentColor": "#D6A45D",
+  "timerStyle": "classic",
+  "premium": false,
+  "recommendedSession": 25,
+  "tags": [
+    "study",
+    "library",
+    "deep-work"
+  ]
+}

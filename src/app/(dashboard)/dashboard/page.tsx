@@ -18,6 +18,8 @@ import { SubjectIntelligenceCard } from "@/components/dashboard/subject-intellig
 import { DailySummaryModal } from "@/components/dashboard/daily-summary-modal";
 import { WeeklyReportModal } from "@/components/dashboard/weekly-report-modal";
 import { RuleBookView } from "@/encyclopedia/components/rule-book-view";
+import { ImmersiveFocus } from "@/components/dashboard/immersive-focus";
+import { useFocusStore } from "@/stores/focusStore";
 
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -57,6 +59,7 @@ import { motion, AnimatePresence } from "framer-motion";
 export default function DashboardPage() {
   const { loadUser, user, achievements, setPhoneUsage, isLoading: isUserLoading, journeyLog } = useUserStore();
   const { loadMissions, missions, dailyQuests, triggerMidnightReset, isLoading: isMissionsLoading } = useMissionStore();
+  const { isFocusModeActive } = useFocusStore();
 
   const defeatedCount = user?.bossesDefeatedCount || 0;
   const combatStats = calculateBossStats(journeyLog, defeatedCount);
@@ -940,6 +943,9 @@ export default function DashboardPage() {
         onClose={() => setIsWeeklyReportOpen(false)}
         data={weeklyRecapPayload}
       />
+
+      {/* Immersive Focus Mode Overlay */}
+      {isFocusModeActive && <ImmersiveFocus />}
     </div>
   );
 }

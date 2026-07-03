@@ -1,3 +1,5 @@
+"use client";
+
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
@@ -27,10 +29,14 @@ interface FocusState {
   
   showSummaryModal: boolean;
   summaryRewards: { xp: number; coins: number; duration: number; preset: string } | null;
+  
+  // Immersive Focus Mode Status
+  isFocusModeActive: boolean;
 
   setPreset: (preset: "deep_work" | "flow" | "ultra_focus" | "custom", customMinutes?: number) => void;
   setAssociatedMissionId: (missionId: string) => void;
   closeSummaryModal: () => void;
+  setFocusModeActive: (active: boolean) => void;
 }
 
 export const useFocusStore = create<FocusState>()(
@@ -51,6 +57,8 @@ export const useFocusStore = create<FocusState>()(
       
       showSummaryModal: false,
       summaryRewards: null,
+      
+      isFocusModeActive: false,
 
       setPreset: (preset, customMinutes) => {
         const store = get();
@@ -77,6 +85,10 @@ export const useFocusStore = create<FocusState>()(
       closeSummaryModal: () => {
         set({ showSummaryModal: false, summaryRewards: null });
       },
+
+      setFocusModeActive: (active) => {
+        set({ isFocusModeActive: active });
+      },
     }),
     {
       name: "studyquest_focus_store",
@@ -93,6 +105,7 @@ export const useFocusStore = create<FocusState>()(
         lastTickTimestamp: state.lastTickTimestamp,
         history: state.history,
         startedSessionsCount: state.startedSessionsCount,
+        isFocusModeActive: state.isFocusModeActive,
       }),
     }
   )

@@ -43,6 +43,7 @@ export function PomodoroTimer() {
     setPreset,
     setAssociatedMissionId,
     closeSummaryModal,
+    setFocusModeActive,
   } = useFocusStore();
 
   const [customVal, setCustomVal] = useState(25);
@@ -134,6 +135,13 @@ export function PomodoroTimer() {
           Focus Command
         </span>
         <div className="flex items-center gap-1.5">
+          <button 
+            onClick={() => setFocusModeActive(true)}
+            className="p-1 rounded hover:bg-slate-100 dark:hover:bg-slate-800 text-accent hover:text-accent/80 transition-colors cursor-pointer"
+            title="Enter Fullscreen Focus Mode"
+          >
+            <Sparkles size={13} />
+          </button>
           <button 
             onClick={() => setShowConfig(!showConfig)}
             className="p-1 rounded hover:bg-slate-100 dark:hover:bg-slate-800 text-text-secondary hover:text-text-primary transition-colors cursor-pointer"
@@ -334,7 +342,10 @@ export function PomodoroTimer() {
               <Button
                 variant="primary"
                 size="sm"
-                onClick={() => focusTimerEngine.startTimer()}
+                onClick={() => {
+                  focusTimerEngine.startTimer();
+                  setFocusModeActive(true);
+                }}
                 className="h-9 px-6 rounded-xl flex items-center gap-1.5 text-[11px] font-bold cursor-pointer shadow-lg shadow-blue-500/10"
               >
                 <Play size={12} className="fill-current" />
@@ -344,7 +355,10 @@ export function PomodoroTimer() {
               <Button
                 variant="primary"
                 size="sm"
-                onClick={() => focusTimerEngine.resumeTimer()}
+                onClick={() => {
+                  focusTimerEngine.resumeTimer();
+                  setFocusModeActive(true);
+                }}
                 className="h-9 px-6 rounded-xl flex items-center gap-1.5 text-[11px] font-bold cursor-pointer"
               >
                 <Play size={12} className="fill-current" />
