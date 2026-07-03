@@ -10,6 +10,7 @@ import { useMounted } from "@/hooks/use-mounted";
 import { useProfileStore } from "@/profile/stores/profileStore";
 import { profileRepository } from "@/profile/repositories/ProfileRepository";
 import { useUserStore } from "@/stores/userStore";
+import { NotificationCenter } from "./notification-center";
 
 interface TopbarProps {
   onMenuClick: () => void;
@@ -98,17 +99,7 @@ export function Topbar({ onMenuClick }: TopbarProps) {
         </Button>
 
         {/* Notifications */}
-        <div className="relative">
-          <Button
-            variant="ghost"
-            size="sm"
-            className="w-9 h-9 p-0 rounded-xl relative"
-            aria-label="Notifications"
-          >
-            <Bell size={17} />
-            <span className="absolute top-2 right-2 w-2 h-2 rounded-full bg-danger ring-2 ring-card" />
-          </Button>
-        </div>
+        <NotificationCenter />
 
         {/* Small Profile Button (Link to /profile) */}
         <Link
