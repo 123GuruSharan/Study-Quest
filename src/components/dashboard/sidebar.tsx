@@ -32,7 +32,7 @@ export const navigationItems = [
   { name: "Reward Shop", icon: ShoppingBag, id: "shop" },
   { name: "Boss Battles", icon: Flame, id: "boss" },
   { name: "Statistics", icon: BarChart3, id: "statistics" },
-  { name: "Calendar", icon: Calendar, id: "calendar" },
+  { name: "Journey", icon: Calendar, id: "calendar" },
   { name: "Settings", icon: Settings, id: "settings" },
   { name: "Rule Book", icon: BookOpen, id: "rules" },
 ];
