@@ -197,11 +197,13 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     }
 
     if (user) {
+      // Sign out to clear the temporary recovery session so the user must log in again
+      await authService.logout();
       set({
-        user,
-        status: "authenticated",
+        user: null,
+        status: "anonymous",
       });
-      useToastStore.getState().showToast("Password updated successfully.", "success", "Completed");
+      useToastStore.getState().showToast("Password updated successfully. Please log in.", "success", "Completed");
       return true;
     }
 

@@ -1,13 +1,14 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useAuthStore } from "@/stores/authStore";
 import { useToastStore } from "@/stores/toastStore";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Sparkles, Lock, CheckCircle2 } from "lucide-react";
+import { supabase } from "@/lib/supabase";
+import { Sparkles, Lock, CheckCircle2, ShieldAlert, Loader2, ArrowLeft } from "lucide-react";
 import Link from "next/link";
 
 export default function ResetPasswordPage() {
@@ -19,11 +20,77 @@ export default function ResetPasswordPage() {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [success, setSuccess] = useState(false);
 
+  // Recovery session validation states
+  const [verifying, setVerifying] = useState(true);
+  const [hasRecoverySession, setHasRecoverySession] = useState(false);
+  const [errorMsg, setErrorMsg] = useState<string | null>(null);
+
   const loading = status === "initializing";
   const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#])[A-Za-z\d@$!%*?&#]{8,}$/;
 
+  // 1. Session verification & token expiration detection
+  useEffect(() => {
+    // Check for error parameters in the URL query or hash segment
+    const hash = typeof window !== "undefined" ? window.location.hash || "" : "";
+    const search = typeof window !== "undefined" ? window.location.search || "" : "";
+
+    const hasError = hash.includes("error=") || search.includes("error=");
+    const isExpired = hash.includes("otp_expired") || search.includes("otp_expired") || 
+                      hash.includes("expired") || search.includes("expired") ||
+                      hash.includes("access_denied") || search.includes("access_denied");
+
+    if (hasError) {
+      if (isExpired) {
+        setErrorMsg("This reset link has expired. Request a new one.");
+      } else {
+        setErrorMsg("Invalid password reset link. Please request a new one.");
+      }
+      setVerifying(false);
+      return;
+    }
+
+    // Check if a session already exists
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (session) {
+        setHasRecoverySession(true);
+        setVerifying(false);
+      }
+    });
+
+    // Subscribe to auth state updates to capture PASSWORD_RECOVERY event
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      console.log("[ResetPasswordPage] onAuthStateChange event:", event, !!session);
+      if (event === "PASSWORD_RECOVERY") {
+        setHasRecoverySession(true);
+        setVerifying(false);
+      }
+    });
+
+    // Safety fallback timeout: if Supabase client finishes loading without triggering state change
+    const timer = setTimeout(() => {
+      supabase.auth.getSession().then(({ data: { session } }) => {
+        if (session) {
+          setHasRecoverySession(true);
+        } else {
+          setErrorMsg("No active recovery session. Please request a new link.");
+        }
+        setVerifying(false);
+      });
+    }, 2000);
+
+    return () => {
+      subscription.unsubscribe();
+      clearTimeout(timer);
+    };
+  }, []);
+
   const handleUpdatePassword = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    if (!hasRecoverySession) {
+      showToast("No active recovery session found. Please request a new reset link.", "error", "Reset Error");
+      return;
+    }
 
     if (!password || !confirmPassword) {
       showToast("Please fill in all password fields.", "error", "Validation Error");
@@ -50,6 +117,21 @@ export default function ResetPasswordPage() {
     }
   };
 
+  // Render Loader during verification phase
+  if (verifying) {
+    return (
+      <div className="min-h-screen w-screen flex flex-col items-center justify-center p-6 bg-slate-50 dark:bg-slate-950 transition-colors duration-200 select-none relative overflow-hidden">
+        <div className="absolute top-0 left-0 right-0 bottom-0 bg-[radial-gradient(circle_at_center,rgba(59,130,246,0.03),transparent_75%)] pointer-events-none" />
+        <div className="relative z-10 flex flex-col items-center">
+          <Loader2 className="w-8 h-8 animate-spin text-accent mb-4" />
+          <span className="text-[10px] font-bold text-text-secondary tracking-widest uppercase">
+            Verifying recovery session...
+          </span>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen w-screen flex flex-col items-center justify-center p-6 bg-slate-50 dark:bg-slate-950 transition-colors duration-200 select-none relative overflow-hidden">
       <div className="absolute top-0 left-0 right-0 bottom-0 bg-[radial-gradient(circle_at_center,rgba(59,130,246,0.03),transparent_75%)] pointer-events-none" />
@@ -70,7 +152,28 @@ export default function ResetPasswordPage() {
         </div>
 
         <Card className="p-6 border-border-theme shadow-xl bg-card">
-          {success ? (
+          {errorMsg ? (
+            // Error Card Layout for expired/invalid tokens
+            <div className="space-y-4 text-center py-2 animate-[fadeIn_200ms_ease]">
+              <div className="flex justify-center text-danger">
+                <ShieldAlert size={36} />
+              </div>
+              <div className="space-y-1">
+                <h4 className="text-xs font-bold uppercase tracking-wider text-text-primary">
+                  Link Verification Failed
+                </h4>
+                <p className="text-[11px] text-text-secondary leading-relaxed">
+                  {errorMsg}
+                </p>
+              </div>
+              <Link href="/forgot-password" className="block w-full">
+                <Button variant="primary" size="md" className="w-full text-xs font-semibold rounded-xl cursor-pointer">
+                  Request New Link
+                </Button>
+              </Link>
+            </div>
+          ) : success ? (
+            // Success Card Layout
             <div className="space-y-4 text-center py-2 animate-[fadeIn_200ms_ease]">
               <div className="flex justify-center text-success">
                 <CheckCircle2 size={36} />
@@ -83,13 +186,14 @@ export default function ResetPasswordPage() {
                   Your password has been reset successfully. You can now log in using your new credentials.
                 </p>
               </div>
-              <Link href="/login" className="block">
+              <Link href="/login" className="block w-full">
                 <Button variant="primary" size="md" className="w-full text-xs font-semibold rounded-xl cursor-pointer">
                   Go to Sign In
                 </Button>
               </Link>
             </div>
           ) : (
+            // Standard Password Form
             <form onSubmit={handleUpdatePassword} className="space-y-4">
               {/* Password */}
               <div className="space-y-1.5">

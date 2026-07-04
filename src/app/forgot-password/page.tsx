@@ -62,8 +62,7 @@ export default function ForgotPasswordPage() {
                   Email Disbursed
                 </h4>
                 <p className="text-[11px] text-text-secondary leading-relaxed">
-                  We've sent a secure password reset link to{" "}
-                  <span className="font-bold text-text-primary">{email}</span>. Check your inbox and spam folders.
+                  Password reset email sent. Please check your inbox.
                 </p>
               </div>
               <Link href="/login" className="block">

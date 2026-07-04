@@ -111,7 +111,8 @@ export function AuthProvider({ children }: AuthProviderProps) {
         }
       } else {
         // Authenticated and verified users visiting auth/signup/verify/complete-profile pages are sent to dashboard
-        if (isPublicRoute || pathname === "/verify-email" || pathname === "/complete-profile") {
+        // Exclude /reset-password so users can complete their recovery session password reset
+        if ((isPublicRoute && pathname !== "/reset-password") || pathname === "/verify-email" || pathname === "/complete-profile") {
           router.replace("/dashboard");
         }
       }
