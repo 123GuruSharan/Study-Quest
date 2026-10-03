@@ -37,7 +37,18 @@ class LocalJourneyRepository {
   }
 }
 
-const useSupabase = process.env.NEXT_PUBLIC_STORAGE_PROVIDER === "supabase" || !!process.env.NEXT_PUBLIC_SUPABASE_URL;
+const isPlaceholderUrl = (url?: string) => {
+  if (!url) return true;
+  return (
+    url.includes("ktjxxjvzmejqlxqsehkx") ||
+    url.includes("placeholder") ||
+    url.includes("example.com")
+  );
+};
+
+const useSupabase =
+  process.env.NEXT_PUBLIC_STORAGE_PROVIDER === "supabase" ||
+  (!!process.env.NEXT_PUBLIC_SUPABASE_URL && !isPlaceholderUrl(process.env.NEXT_PUBLIC_SUPABASE_URL));
 
 export const userRepository = useSupabase ? supabaseUserRepository : localUserRepository;
 export const missionRepository = useSupabase ? supabaseMissionRepository : localMissionRepository;
@@ -45,3 +56,4 @@ export const statisticsRepository = useSupabase ? supabaseStatisticsRepository :
 export const achievementRepository = useSupabase ? supabaseAchievementRepository : localAchievementRepository;
 export const rewardRepository = useSupabase ? supabaseRewardRepository : new LocalRewardRepository();
 export const journeyRepository = useSupabase ? supabaseJourneyRepository : new LocalJourneyRepository();
+

@@ -16,7 +16,8 @@ import {
   Settings,
   X,
   Sparkles,
-  BookOpen
+  BookOpen,
+  GraduationCap
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -26,6 +27,7 @@ import { useUiStore } from "@/stores/uiStore";
 
 export const navigationItems = [
   { name: "Dashboard", icon: LayoutDashboard, id: "dashboard" },
+  { name: "Study", icon: GraduationCap, id: "study" },
   { name: "Missions", icon: Target, id: "missions" },
   { name: "Achievements", icon: Trophy, id: "achievements" },
   { name: "Levels", icon: Award, id: "levels" },
@@ -81,21 +83,23 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
           
           // Determine if this sidebar item is active
           let isActive = false;
-          if (item.id === "settings") {
+          if (item.id === "study") {
+            isActive = pathname === "/study";
+          } else if (item.id === "settings") {
             isActive = pathname === "/settings";
           } else {
             isActive = pathname === "/dashboard" && activeTab === item.id;
           }
 
           // Determine navigation destination
-          const href = item.id === "settings" ? "/settings" : `/dashboard?tab=${item.id}`;
+          const href = item.id === "study" ? "/study" : item.id === "settings" ? "/settings" : `/dashboard?tab=${item.id}`;
 
           return (
             <Link
               key={item.id}
               href={href}
               onClick={() => {
-                if (item.id !== "settings") {
+                if (item.id !== "settings" && item.id !== "study") {
                   setActiveTab(item.id);
                 }
                 onClose(); // Close mobile drawer on navigation
@@ -103,7 +107,7 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
               className={cn(
                 "flex items-center w-full gap-3 px-4 py-3 text-[14px] font-medium rounded-xl transition-all duration-200 cursor-pointer group",
                 isActive
-                  ? "bg-accent/5 dark:bg-accent/10 text-accent"
+                  ? "bg-accent/5 dark:bg-accent/10 text-accent font-semibold"
                   : "text-text-secondary hover:text-text-primary hover:bg-slate-50 dark:hover:bg-slate-800/40"
               )}
             >

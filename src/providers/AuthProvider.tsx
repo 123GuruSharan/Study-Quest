@@ -32,8 +32,8 @@ export function AuthProvider({ children }: AuthProviderProps) {
   // 2. Fetch player profile and gameplay state once authenticated
   useEffect(() => {
     if (status === "authenticated" && user?.id) {
-      loadProfile(user.id).then(async (success) => {
-        if (success) {
+      loadProfile(user.id)
+        .then(async () => {
           setProfileLoaded(true);
 
           // Import gameplay stores dynamically to prevent circular dependencies
@@ -51,8 +51,12 @@ export function AuthProvider({ children }: AuthProviderProps) {
             console.error("Failed to load gameplay state:", err);
             setGameStateLoaded(true); // Proceed to prevent permanent loading lock
           }
-        }
-      });
+        })
+        .catch((err) => {
+          console.error("Failed to load player profile:", err);
+          setProfileLoaded(true);
+          setGameStateLoaded(true);
+        });
     } else {
       setProfileLoaded(false);
       setGameStateLoaded(false);
